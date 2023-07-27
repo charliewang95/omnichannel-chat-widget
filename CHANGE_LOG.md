@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed an issue where opening a chat right after agent ends the previous chat doesn't work
+
+## [1.2.1] - 2023-7-24
+
+### Changed
+
+- Uptake [@microsoft/omnichannel-chat-sdk@1.4.4](https://www.npmjs.com/package/@microsoft/omnichannel-chat-sdk/v/1.4.4)
+
+## [1.2.0] - 2023-7-20
+
 ### Added
 
 - Add ability for widget to be draggable on desktop browser
@@ -138,6 +150,9 @@ All notable changes to this project will be documented in this file.
 # Chat Components
 
 ## [Unreleased]
+
+## [1.0.5] - 2023-7-20
+
 ### Added
 
 - Added place holder for inputvalidationPane, to display the proper format of an email.
