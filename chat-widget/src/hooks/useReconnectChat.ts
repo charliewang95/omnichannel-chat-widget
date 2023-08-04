@@ -1,7 +1,7 @@
 import { BroadcastEvent, LogLevel, TelemetryEvent } from "../common/telemetry/TelemetryConstants";
 import { checkContactIdError, isNullOrEmptyString } from "../common/utils";
 import { handleAuthentication, removeAuthTokenProvider } from "../components/livechatwidget/common/authHelper";
-import { hasReconnectId, isReconnectEnabled, redirectPage } from "../components/livechatwidget/common/reconnectChatHelper";
+import { hasReconnectId, isPersistentEnabled, isReconnectEnabled, redirectPage } from "../components/livechatwidget/common/reconnectChatHelper";
 
 import { BroadcastService } from "@microsoft/omnichannel-chat-components";
 import ChatConfig from "@microsoft/omnichannel-chat-sdk/lib/core/ChatConfig";
@@ -76,7 +76,7 @@ const useReconnectChat = (props: ILiveChatWidgetProps) => {
     };
 
     const reconnectChat = async () => {
-        if (!isReconnectEnabled(props.chatConfig)) return;
+        if (!isReconnectEnabled(props.chatConfig) || isPersistentEnabled(props.chatConfig)) return;
     
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const isAuthenticatedChat = !!(props.chatConfig?.LiveChatConfigAuthSettings as any)?.msdyn_javascriptclientfunction;

@@ -18,6 +18,7 @@ import {
 } from "../../../common/utils";
 import { defaultClientDataStoreProvider, isCookieAllowed } from "../../../common/storage/default/defaultClientDataStoreProvider";
 import { endChat, prepareEndChat } from "../common/endChat";
+import { isPersistentEnabled, isReconnectEnabled } from "../common/reconnectChatHelper";
 import {
     shouldShowCallingContainer,
     shouldShowChatButton,
@@ -73,7 +74,6 @@ import { handleChatDisconnect } from "../common/chatDisconnectHelper";
 import { initCallingSdk } from "../common/initCallingSdk";
 import { initConfirmationPropsComposer } from "../common/initConfirmationPropsComposer";
 import { initWebChatComposer } from "../common/initWebChatComposer";
-import { isReconnectEnabled } from "../common/reconnectChatHelper";
 import { registerBroadcastServiceForStorage } from "../../../common/storage/default/defaultCacheManager";
 import { registerTelemetryLoggers } from "../common/registerTelemetryLoggers";
 import { setPostChatContextAndLoadSurvey } from "../common/setPostChatContextAndLoadSurvey";
@@ -149,7 +149,7 @@ export const LiveChatWidgetStateful = (props: ILiveChatWidgetProps) => {
             isChatValid = await checkConversationValidity();
             if (isChatValid === true) {
                 //Check if reconnect enabled
-                if (isReconnectEnabled(props.chatConfig) === true) {
+                if (isReconnectEnabled(props.chatConfig) === true && !isPersistentEnabled(props.chatConfig)) {
                     await reconnectChat();
                     // If chat reconnect has kicked in chat state will become Active or Reconnect. So just exit, else go next
                     if (state.appStates.conversationState === ConversationState.Active || state.appStates.conversationState === ConversationState.ReconnectChat) {
@@ -164,7 +164,7 @@ export const LiveChatWidgetStateful = (props: ILiveChatWidgetProps) => {
         if (isChatValid === false) {
             if (state?.appStates?.hideStartChatButton === true) {
                 // adding the reconnect logic for the case when customer tries to reconnect from a new browser or InPrivate browser
-                if (isReconnectEnabled(props.chatConfig) === true) {
+                if (isReconnectEnabled(props.chatConfig) === true && !isPersistentEnabled(props.chatConfig)) {
                     await reconnectChat();
                     // If chat reconnect has kicked in chat state will become Active or Reconnect. So just exit, else go next
                     if (state.appStates.conversationState === ConversationState.Active || state.appStates.conversationState === ConversationState.ReconnectChat) {
