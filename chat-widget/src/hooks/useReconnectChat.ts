@@ -1,7 +1,7 @@
 import { BroadcastEvent, LogLevel, TelemetryEvent } from "../common/telemetry/TelemetryConstants";
 import { checkContactIdError, isNullOrEmptyString } from "../common/utils";
 import { handleAuthentication, removeAuthTokenProvider } from "../components/livechatwidget/common/authHelper";
-import { hasReconnectId, isPersistentEnabled, isReconnectEnabled, redirectPage } from "../components/livechatwidget/common/reconnectChatHelper";
+import { isReconnectIdPresent, isPersistentEnabled, isReconnectEnabled, redirectPage } from "../components/livechatwidget/common/reconnectChatHelper";
 
 import { BroadcastService } from "@microsoft/omnichannel-chat-components";
 import ChatConfig from "@microsoft/omnichannel-chat-sdk/lib/core/ChatConfig";
@@ -90,7 +90,7 @@ const useReconnectChat = (props: ILiveChatWidgetProps) => {
             return;
         }
     
-        if (hasReconnectId(reconnectChatContext)) {
+        if (isReconnectIdPresent(reconnectChatContext)) {
             // If reconnect id is provided in props, don't show reconnect pane
             if (props.reconnectChatPaneProps?.reconnectId && !isNullOrEmptyString(props.reconnectChatPaneProps?.reconnectId)) {
                 await setReconnectIdAndStartChat(isAuthenticatedChat, reconnectChatContext.reconnectId ?? "");

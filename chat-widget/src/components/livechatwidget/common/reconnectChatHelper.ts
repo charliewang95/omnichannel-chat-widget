@@ -35,8 +35,8 @@ const isPersistentEnabled = (chatConfig?: ChatConfig): boolean => {
     return false;
 };
 
-const hasReconnectId = (reconnectAvailabilityResponse: IReconnectChatContext) => {
+const isReconnectIdPresent = (reconnectAvailabilityResponse: IReconnectChatContext) => {
     return reconnectAvailabilityResponse && !isNullOrUndefined(reconnectAvailabilityResponse.reconnectId);
 };
 
-export { redirectPage, isReconnectEnabled, isPersistentEnabled, hasReconnectId };
+export { redirectPage, isReconnectEnabled, isPersistentEnabled, isReconnectIdPresent };
