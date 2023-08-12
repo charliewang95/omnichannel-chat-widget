@@ -1,5 +1,5 @@
 import { LogLevel, TelemetryEvent } from "../common/telemetry/TelemetryConstants";
-import { getStateFromCache, getWidgetCacheIdfromProps, isNullOrEmptyString, isUndefinedOrEmpty } from "../common/utils";
+import { getStateFromCache, getWidgetCacheIdfromProps, isUndefinedOrEmpty } from "../common/utils";
 
 import { Constants } from "../common/Constants";
 import { Dispatch } from "react";
@@ -9,7 +9,7 @@ import { ILiveChatWidgetProps } from "../components/livechatwidget/interfaces/IL
 import { TelemetryHelper } from "../common/telemetry/TelemetryHelper";
 import useChatContextStore from "./useChatContextStore";
 
-const useSetCustomContext = (props: ILiveChatWidgetProps, widgetInstanceId?: string) => {
+const useSetCustomContext = (props: ILiveChatWidgetProps) => {
     const [state, ]: [ILiveChatWidgetContext, Dispatch<ILiveChatWidgetAction>] = useChatContextStore();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,12 +55,10 @@ const useSetCustomContext = (props: ILiveChatWidgetProps, widgetInstanceId?: str
             return state.domainStates.customContext;
         }
         
-        if (isNullOrEmptyString(widgetInstanceId)) {
-            widgetInstanceId = getWidgetCacheIdfromProps(props);
-        }
+        const widgetInstanceId = getWidgetCacheIdfromProps(props);
 
         // Look in cache if state doesn't have context
-        const persistedState = getStateFromCache(widgetInstanceId as string);
+        const persistedState = getStateFromCache(widgetInstanceId);
         const customContextLocal = persistedState?.domainStates?.customContext ?? props?.initialCustomContext;
         if (customContextLocal) {
             TelemetryHelper.logLoadingEvent(LogLevel.INFO, {

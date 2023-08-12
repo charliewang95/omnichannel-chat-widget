@@ -54,7 +54,7 @@ const useStartChat = (props: ILiveChatWidgetProps) => {
             const authClientFunction = getAuthClientFunction(chatConfig);
             if (getAuthToken && authClientFunction) {
                 // set auth token to chat sdk before start chat
-                const authSuccess = handleAuthentication(chatSDK, chatConfig, getAuthToken);
+                const authSuccess = await handleAuthentication(chatSDK, chatConfig, getAuthToken);
                 if (!authSuccess) {
                     // Replacing with error ui
                     throw new Error("Authentication was not successful");
@@ -165,8 +165,8 @@ const useStartChat = (props: ILiveChatWidgetProps) => {
                 ElapsedTimeInMilliseconds: TelemetryTimers?.WidgetLoadTimer?.milliSecondsElapsed
             });
             NotificationHandler.notifyError(NotificationScenarios.Connection, "Start Chat Failed: " + ex);
-            dispatch({ type: LiveChatWidgetActionType.SET_START_CHAT_FAILING, payload: true });
             if (!hideErrorUIPane) {
+                dispatch({ type: LiveChatWidgetActionType.SET_START_CHAT_FAILING, payload: true });
                 // Set app state to failing start chat if hideErrorUI is not turned on
                 TelemetryHelper.logLoadingEvent(LogLevel.INFO, {
                     Event: TelemetryEvent.ErrorUIPaneLoaded,
