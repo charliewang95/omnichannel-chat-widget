@@ -1,6 +1,6 @@
 import { IChatDisconnectControlProps } from "@microsoft/omnichannel-chat-components/lib/types/components/notificationpane/interfaces/chatdisconnect/IChatDisconnectControlProps";
-import { NotificationPaneConstants } from "../../../common/Constants";
 import { NotificationAlertIcon } from "../../../assets/Icons";
+import { NotificationPaneConstants } from "../../../common/Constants";
 
 export const defaultChatDisconnectControlProps: IChatDisconnectControlProps = {
     hideTitle: false,
@@ -29,6 +29,13 @@ export const defaultChatDisconnectControlProps: IChatDisconnectControlProps = {
     closeChatButtonProps: {
         id: NotificationPaneConstants.CloseChatId,
         text: NotificationPaneConstants.CloseChatText,
+        type: "text",
+        iconName: NotificationPaneConstants.ChromeCloseIconName,
+        ariaLabel: NotificationPaneConstants.CloseChatAriaLabel,
+    },
+    sendMessageButtonProps: {
+        id: NotificationPaneConstants.CloseChatId,
+        text: "Send",
         type: "text",
         iconName: NotificationPaneConstants.ChromeCloseIconName,
         ariaLabel: NotificationPaneConstants.CloseChatAriaLabel,

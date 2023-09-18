@@ -2,6 +2,7 @@ import { ConversationEndEntity, ParticipantType } from "../../../common/Constant
 import { LogLevel, TelemetryEvent } from "../../../common/telemetry/TelemetryConstants";
 import { changeLanguageCodeFormatForWebChat, getConversationDetailsCall } from "../../../common/utils";
 
+import DOMPurify from "dompurify";
 import { Dispatch } from "react";
 import HyperlinkTextOverrideRenderer from "../../webchatcontainerstateful/webchatcontroller/markdownrenderers/HyperlinkTextOverrideRenderer";
 import { IDataMaskingInfo } from "../../webchatcontainerstateful/interfaces/IDataMaskingInfo";
@@ -20,11 +21,14 @@ import createAttachmentUploadValidatorMiddleware from "../../webchatcontainersta
 import { createAvatarMiddleware } from "../../webchatcontainerstateful/webchatcontroller/middlewares/renderingmiddlewares/avatarMiddleware";
 import { createCardActionMiddleware } from "../../webchatcontainerstateful/webchatcontroller/middlewares/renderingmiddlewares/cardActionMiddleware";
 import createConversationEndMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/storemiddlewares/conversationEndMiddleware";
+import createCopilotMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/storemiddlewares/copilotMiddleware";
 import createDataMaskingMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/storemiddlewares/dataMaskingMiddleware";
 import { createMarkdown } from "./createMarkdown";
 import createMaxMessageSizeValidator from "../../webchatcontainerstateful/webchatcontroller/middlewares/storemiddlewares/maxMessageSizeValidator";
+import createMessageSequenceIdOverrideMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/renderingmiddlewares/messageSequenceIdOverrideMiddleware";
 import createMessageTimeStampMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/renderingmiddlewares/messageTimestampMiddleware";
 import { createStore } from "botframework-webchat";
+import createToastMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/renderingmiddlewares/toastMiddleware";
 import { createWebChatTelemetry } from "../../webchatcontainerstateful/webchatcontroller/webchattelemetry/WebChatLogger";
 import { defaultAttachmentProps } from "../../webchatcontainerstateful/common/defaultProps/defaultAttachmentProps";
 import { defaultMiddlewareLocalizedTexts } from "../../webchatcontainerstateful/common/defaultProps/defaultMiddlewareLocalizedTexts";
@@ -35,9 +39,6 @@ import htmlPlayerMiddleware from "../../webchatcontainerstateful/webchatcontroll
 import htmlTextMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/storemiddlewares/htmlTextMiddleware";
 import preProcessingMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/storemiddlewares/preProcessingMiddleware";
 import sanitizationMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/storemiddlewares/sanitizationMiddleware";
-import DOMPurify from "dompurify";
-import createMessageSequenceIdOverrideMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/renderingmiddlewares/messageSequenceIdOverrideMiddleware";
-import createToastMiddleware from "../../webchatcontainerstateful/webchatcontroller/middlewares/renderingmiddlewares/toastMiddleware";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const initWebChatComposer = (props: ILiveChatWidgetProps, state: ILiveChatWidgetContext, dispatch: Dispatch<ILiveChatWidgetAction>, chatSDK: any, endChat: any) => {
@@ -91,6 +92,7 @@ export const initWebChatComposer = (props: ILiveChatWidgetProps, state: ILiveCha
             htmlTextMiddleware,
             createMaxMessageSizeValidator(localizedTexts),
             sanitizationMiddleware,
+            createCopilotMiddleware(dispatch),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             ...(props.webChatContainerProps?.storeMiddlewares as any[] ?? [])
         );
@@ -129,7 +131,7 @@ export const initWebChatComposer = (props: ILiveChatWidgetProps, state: ILiveCha
         activityMiddleware: props.webChatContainerProps?.renderingMiddlewareProps?.disableActivityMiddleware ? undefined : createActivityMiddleware(state.domainStates.renderingMiddlewareProps?.systemMessageStyleProps, state.domainStates.renderingMiddlewareProps?.userMessageStyleProps),
         attachmentMiddleware: props.webChatContainerProps?.renderingMiddlewareProps?.disableAttachmentMiddleware ? undefined : createAttachmentMiddleware(state.domainStates.renderingMiddlewareProps?.attachmentProps?.enableInlinePlaying ?? defaultAttachmentProps.enableInlinePlaying),
         activityStatusMiddleware: props.webChatContainerProps?.renderingMiddlewareProps?.disableActivityStatusMiddleware ? undefined : defaultWebChatContainerStatefulProps.webChatProps?.activityStatusMiddleware,
-        toastMiddleware: props.webChatContainerProps?.renderingMiddlewareProps?.disableToastMiddleware ? undefined: createToastMiddleware(props.notificationPaneProps, endChat),
+        toastMiddleware: props.webChatContainerProps?.renderingMiddlewareProps?.disableToastMiddleware ? undefined: createToastMiddleware(props.notificationPaneProps, endChat, dispatch),
         renderMarkdown,
         avatarMiddleware: props.webChatContainerProps?.renderingMiddlewareProps?.disableAvatarMiddleware ? undefined : createAvatarMiddleware(state.domainStates.renderingMiddlewareProps?.avatarStyleProps, state.domainStates.renderingMiddlewareProps?.avatarTextStyleProps),
         groupActivitiesMiddleware: props.webChatContainerProps?.renderingMiddlewareProps?.disableGroupActivitiesMiddleware ? undefined : defaultWebChatContainerStatefulProps.webChatProps?.groupActivitiesMiddleware,

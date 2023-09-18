@@ -263,8 +263,15 @@ export enum LiveChatWidgetActionType {
     SET_SURVEY_MODE,
 
     /*
-    Parameters:
-    ConfirmationState: Set confirmation state(OK/Cancel/NotSet)
+        Parameters:
+        ConfirmationState: Set confirmation state(OK/Cancel/NotSet)
     */
-    SET_CONFIRMATION_STATE
+    SET_CONFIRMATION_STATE,
+
+    /*
+        Parameters:
+        string: The suggested reply returned by Azure OpenAI GPT
+    */
+    SET_SUGGESTED_RESPONSE,
+    INCREMENT_SUGGESTED_RESPONSE_ID
 }

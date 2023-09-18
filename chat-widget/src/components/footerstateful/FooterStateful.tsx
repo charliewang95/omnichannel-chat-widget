@@ -1,5 +1,6 @@
+import { IButtonStyles, IconButton } from "@fluentui/react";
 import { LogLevel, TelemetryEvent } from "../../common/telemetry/TelemetryConstants";
-import React, { Dispatch } from "react";
+import React, { Dispatch, useEffect, useState } from "react";
 
 import AudioNotificationStateful from "./audionotificationstateful/AudioNotificationStateful";
 import { Constants } from "../../common/Constants";
@@ -13,16 +14,56 @@ import { NotificationHandler } from "../webchatcontainerstateful/webchatcontroll
 import { NotificationScenarios } from "../webchatcontainerstateful/webchatcontroller/enums/NotificationScenarios";
 import { TelemetryHelper } from "../../common/telemetry/TelemetryHelper";
 import { downloadTranscript } from "./downloadtranscriptstateful/DownloadTranscriptStateful";
+import { hooks } from "botframework-webchat";
 import useChatContextStore from "../../hooks/useChatContextStore";
 import useChatSDKStore from "../../hooks/useChatSDKStore";
 
+const hoveredStyles = {
+    filter: "brightness(0.8)",
+    backgroundColor: "#C8C8C8"
+};
+
+const iconButtonStyles: IButtonStyles = {
+    icon: {
+        color: "blue",
+        fontSize: 16,
+    },
+    root: {
+        height: "25px",
+        lineHeight: "25px",
+        width: "25px"
+    },
+    rootHovered: hoveredStyles,
+    rootFocused: hoveredStyles,
+    rootPressed: hoveredStyles
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const FooterStateful = (props: any) => {
+    const [aiDisabled, setAiDisabled] = useState(false);
+
+    const CopilotButton = () => {
+        const handleOnClick = () => {
+            setAiDisabled(disabled => !disabled);
+        };
+    
+        return (
+            <IconButton
+                id={"copilot"}
+                iconProps={{iconName: (aiDisabled ? "Unknown" : "UnknownSolid")}}
+                onClick={handleOnClick}
+                styles={iconButtonStyles}
+            />
+        );
+    };
     const [state, dispatch]: [ILiveChatWidgetContext, Dispatch<ILiveChatWidgetAction>] = useChatContextStore();
     // hideFooterDisplay - the purpose of this is to keep the footer always "active",
     // but hide it visually in certain states (e.g., loading state) and show in some other states (e.g. active state).
     // The reason for this approach is to make sure that state variables for audio notification work correctly after minimizing
     const { footerProps, downloadTranscriptProps, audioNotificationProps, hideFooterDisplay } = props;
+    const { useSendBoxValue } = hooks;
+    const [, setSendBoxValue] = useSendBoxValue();
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const chatSDK: any = useChatSDKStore();
     const controlProps: IFooterControlProps = {
@@ -61,7 +102,31 @@ export const FooterStateful = (props: any) => {
             ...footerProps?.controlProps?.audioNotificationButtonProps,
             isAudioMuted: state.appStates.isAudioMuted
         },
+        rightGroup: {
+            children: [
+                <CopilotButton key="copilotButton"/>
+            ]
+        }
     };
+
+    useEffect(() => {
+        if (!aiDisabled && state.appStates.aiSuggestedReply.message !== "") {
+            NotificationHandler.notifyInfo(NotificationScenarios.SuggestedReply, state.appStates.aiSuggestedReply.message);
+        }
+    }, [state.appStates.aiSuggestedReply.message]);
+
+    useEffect(() => {
+        if (!aiDisabled) {
+            setSendBoxValue(state.appStates.aiSuggestedReply.message);
+            NotificationHandler.dismissNotification(NotificationScenarios.SuggestedReply);
+        }
+    }, [state.appStates.aiSuggestedReply.id]);
+
+    useEffect(() => {
+        if (aiDisabled) {
+            NotificationHandler.dismissNotification(NotificationScenarios.SuggestedReply);
+        }
+    }, [aiDisabled]);
 
     return (
         <>

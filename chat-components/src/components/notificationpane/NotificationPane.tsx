@@ -1,10 +1,11 @@
-import React from "react";
-import { ILabelStyles, Image, Label, Stack, Link, IStackStyles, IImageStyles, ILinkStyles } from "@fluentui/react";
-import { INotificationPaneInternal } from "./interfaces/common/INotificationPaneInternal";
-import DismissButton from "./subcomponents/DismissButton";
+import { IImageStyles, ILabelStyles, ILinkStyles, IStackStyles, Image, Label, Link, Stack } from "@fluentui/react";
+
 import CloseChatButton from "./subcomponents/CloseChatButton";
-import { decodeComponentString } from "../../common/decodeComponentString";
+import DismissButton from "./subcomponents/DismissButton";
+import { INotificationPaneInternal } from "./interfaces/common/INotificationPaneInternal";
 import { Ids } from "../../common/Constants";
+import React from "react";
+import { decodeComponentString } from "../../common/decodeComponentString";
 
 function NotificationPane(props: INotificationPaneInternal) {
     const elementId = props.id ?? Ids.DefaultNotificationPaneId;
@@ -42,6 +43,10 @@ function NotificationPane(props: INotificationPaneInternal) {
     const closeChatButtonProps = Object.assign({}, props.closeChatButtonProps);
     const closeChatButtonStyles = Object.assign({}, props.closeChatButtonStyleProps);
     const closeChatButtonHoverStyles = Object.assign({}, props.closeChatButtonHoverStyleProps);
+
+    const sendMessageButtonProps = Object.assign({}, props.sendMessageButtonProps);
+    const sendMessageButtonStyles = Object.assign({}, props.closeChatButtonStyleProps);
+    const sendMessageButtonHoverStyles = Object.assign({}, props.closeChatButtonHoverStyleProps);
 
     const infoGroupStyles: IStackStyles = {
         root: Object.assign({}, props.infoGroupStyleProps)
@@ -118,6 +123,13 @@ function NotificationPane(props: INotificationPaneInternal) {
                 <Stack horizontal
                     styles={buttonGroupStyles}
                     dir={props.dir ?? "ltr"}>
+                    {!props.hideCloseChatButton && <CloseChatButton
+                        {...sendMessageButtonProps}
+                        className={props.closeChatButtonClassName}
+                        onClick={props.sendMessageButtonProps?.onClick}
+                        styles={sendMessageButtonStyles}
+                        hoverStyles={sendMessageButtonHoverStyles}
+                    />}
                     {!props.hideCloseChatButton && <CloseChatButton
                         {...closeChatButtonProps}
                         className={props.closeChatButtonClassName}

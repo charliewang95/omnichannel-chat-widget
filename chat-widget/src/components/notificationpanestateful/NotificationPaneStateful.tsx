@@ -1,20 +1,21 @@
+import { ConfirmationState, NotificationPaneConstants } from "../../common/Constants";
+import { LogLevel, TelemetryEvent } from "../../common/telemetry/TelemetryConstants";
 import React, { Dispatch, useEffect, useRef } from "react";
+
+import { ILiveChatWidgetAction } from "../../contexts/common/ILiveChatWidgetAction";
+import { ILiveChatWidgetContext } from "../../contexts/common/ILiveChatWidgetContext";
+import { INotificationPaneInternal } from "@microsoft/omnichannel-chat-components/lib/types/components/notificationpane/interfaces/common/INotificationPaneInternal";
+import { INotificationPaneStatefulProps } from "./interfaces/INotificationPaneStatefulProps";
+import { LiveChatWidgetActionType } from "../../contexts/common/LiveChatWidgetActionType";
 import { NotificationPane } from "@microsoft/omnichannel-chat-components";
+import { NotificationScenarios } from "../webchatcontainerstateful/webchatcontroller/enums/NotificationScenarios";
+import { TelemetryHelper } from "../../common/telemetry/TelemetryHelper";
+import { defaultChatDisconnectControlProps } from "./defaultProps/defaultChatDisconnectControlProps";
+import { defaultChatDisconnectStyleProps } from "./defaultProps/defaultChatDisconnectStyleProps";
 import { hooks } from "botframework-webchat";
 import { useCallback } from "react";
-import { INotificationPaneStatefulProps } from "./interfaces/INotificationPaneStatefulProps";
-import { INotificationPaneInternal } from "@microsoft/omnichannel-chat-components/lib/types/components/notificationpane/interfaces/common/INotificationPaneInternal";
-import { NotificationScenarios } from "../webchatcontainerstateful/webchatcontroller/enums/NotificationScenarios";
 import useChatAdapterStore from "../../hooks/useChatAdapterStore";
-import { ILiveChatWidgetContext } from "../../contexts/common/ILiveChatWidgetContext";
-import { ILiveChatWidgetAction } from "../../contexts/common/ILiveChatWidgetAction";
 import useChatContextStore from "../../hooks/useChatContextStore";
-import { TelemetryHelper } from "../../common/telemetry/TelemetryHelper";
-import { LogLevel, TelemetryEvent } from "../../common/telemetry/TelemetryConstants";
-import { LiveChatWidgetActionType } from "../../contexts/common/LiveChatWidgetActionType";
-import { ConfirmationState, NotificationPaneConstants } from "../../common/Constants";
-import { defaultChatDisconnectStyleProps } from "./defaultProps/defaultChatDisconnectStyleProps";
-import { defaultChatDisconnectControlProps } from "./defaultProps/defaultChatDisconnectControlProps";
 
 export const NotificationPaneStateful = (props: INotificationPaneStatefulProps) => {
     const { notificationPaneProps, notificationScenarioType, endChat } = props;
@@ -41,7 +42,14 @@ export const NotificationPaneStateful = (props: INotificationPaneStatefulProps) 
         localConfirmationPaneState.current = state?.domainStates?.confirmationState;
     }, [state?.domainStates?.confirmationState]);
 
-    const {useDismissNotification} = hooks;
+    const { useDismissNotification, useSendMessage } = hooks;
+    const sendMessage = useSendMessage();
+
+    const onSendMessageClick = () => {
+        sendMessage(state.appStates.aiSuggestedReply.message);
+        dismissNotification(NotificationScenarios.SuggestedReply);
+    };
+
     const dismissNotification = useDismissNotification();
     const handleDismissNotification = useCallback(() => {
         TelemetryHelper.logActionEvent(LogLevel.INFO, { Event: TelemetryEvent.NotificationDismissButtonClicked, Description: `${notificationScenarioType} Notification Dismiss button clicked.` });
@@ -111,6 +119,11 @@ export const NotificationPaneStateful = (props: INotificationPaneStatefulProps) 
             closeChatButtonStyleProps: Object.assign({}, defaultChatDisconnectStyleProps.closeChatButtonStyleProps, notificationProps.styleProps?.closeChatButtonStyleProps),
             closeChatButtonHoverStyleProps: Object.assign({}, defaultChatDisconnectStyleProps.closeChatButtonHoverStyleProps, notificationProps.styleProps?.closeChatButtonHoverStyleProps),
             closeChatButtonClassName: notificationProps.styleProps?.classNames?.closeChatButtonClassName ?? defaultChatDisconnectStyleProps.classNames?.closeChatButtonClassName,
+            hideSendMessageButton: notificationProps.controlProps?.hideSendMessageButton ?? defaultChatDisconnectControlProps.hideCloseChatButton,
+            sendMessageButtonProps: Object.assign({}, defaultChatDisconnectControlProps.sendMessageButtonProps, notificationProps.controlProps?.sendMessageButtonProps, { onClick: onSendMessageClick }),
+            sendMessageButtonStyleProps: {marginRight: "10px"},
+            sendMessageButtonHoverStyleProps: Object.assign({}, defaultChatDisconnectStyleProps.closeChatButtonHoverStyleProps, notificationProps.styleProps?.closeChatButtonHoverStyleProps),
+            sendMessageButtonClassName: notificationProps.styleProps?.classNames?.closeChatButtonClassName ?? defaultChatDisconnectStyleProps.classNames?.closeChatButtonClassName,
         };
     };
 
@@ -142,6 +155,9 @@ export const NotificationPaneStateful = (props: INotificationPaneStatefulProps) 
     
     switch (notificationScenarioType) {
         case NotificationScenarios.ChatDisconnect:
+            populateInternalProps(notificationPaneProps?.chatDisconnectNotificationProps);
+            break;
+        case NotificationScenarios.SuggestedReply:
             populateInternalProps(notificationPaneProps?.chatDisconnectNotificationProps);
             break;
         // TODO additional scenarios to be added...

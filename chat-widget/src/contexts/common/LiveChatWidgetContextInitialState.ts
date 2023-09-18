@@ -1,10 +1,11 @@
+import { ConfirmationState, Constants, ConversationEndEntity, StorageType } from "../../common/Constants";
+import { getWidgetCacheIdfromProps, isNullOrUndefined } from "../../common/utils";
+
 import { ConversationState } from "./ConversationState";
 import { ILiveChatWidgetContext } from "./ILiveChatWidgetContext";
 import { ILiveChatWidgetProps } from "../../components/livechatwidget/interfaces/ILiveChatWidgetProps";
-import { defaultMiddlewareLocalizedTexts } from "../../components/webchatcontainerstateful/common/defaultProps/defaultMiddlewareLocalizedTexts";
-import { getWidgetCacheIdfromProps, isNullOrUndefined } from "../../common/utils";
 import { defaultClientDataStoreProvider } from "../../common/storage/default/defaultClientDataStoreProvider";
-import { ConfirmationState, Constants, ConversationEndEntity, StorageType } from "../../common/Constants";
+import { defaultMiddlewareLocalizedTexts } from "../../components/webchatcontainerstateful/common/defaultProps/defaultMiddlewareLocalizedTexts";
 
 export const getLiveChatWidgetContextInitialState = (props: ILiveChatWidgetProps) => {
 
@@ -58,7 +59,11 @@ export const getLiveChatWidgetContextInitialState = (props: ILiveChatWidgetProps
             unreadMessageCount: 0,
             conversationEndedBy: ConversationEndEntity.NotSet,
             chatDisconnectEventReceived: false,
-            selectedSurveyMode: null
+            selectedSurveyMode: null,
+            aiSuggestedReply: {
+                message: "",
+                id: 0
+            }
         },
         uiStates: {
             showConfirmationPane: false,

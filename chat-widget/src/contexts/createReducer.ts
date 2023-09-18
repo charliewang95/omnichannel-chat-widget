@@ -1,5 +1,7 @@
 /* eslint-disable indent */
 
+import { ConfirmationState, ConversationEndEntity } from "../common/Constants";
+
 import { ConversationState } from "./common/ConversationState";
 import { IInternalTelemetryData } from "../common/telemetry/interfaces/IInternalTelemetryData";
 import { ILiveChatWidgetAction } from "./common/ILiveChatWidgetAction";
@@ -7,7 +9,6 @@ import { ILiveChatWidgetContext } from "./common/ILiveChatWidgetContext";
 import { ILiveChatWidgetLocalizedTexts } from "./common/ILiveChatWidgetLocalizedTexts";
 import { IRenderingMiddlewareProps } from "../components/webchatcontainerstateful/interfaces/IRenderingMiddlewareProps";
 import { LiveChatWidgetActionType } from "./common/LiveChatWidgetActionType";
-import { ConfirmationState, ConversationEndEntity } from "../common/Constants";
 import { PostChatSurveyMode } from "../components/postchatsurveypanestateful/enums/PostChatSurveyMode";
 
 export const createReducer = () => {
@@ -360,6 +361,30 @@ export const createReducer = () => {
                     domainStates: {
                         ...state.domainStates,
                         confirmationState: action.payload as ConfirmationState
+                    }
+                };
+
+            case LiveChatWidgetActionType.SET_SUGGESTED_RESPONSE:
+                return {
+                    ...state,
+                    appStates: {
+                        ...state.appStates,
+                        aiSuggestedReply: {
+                            ...state.appStates.aiSuggestedReply,
+                            message: action.payload as string
+                        }
+                    }
+                };
+
+            case LiveChatWidgetActionType.INCREMENT_SUGGESTED_RESPONSE_ID:
+                return {
+                    ...state,
+                    appStates: {
+                        ...state.appStates,
+                        aiSuggestedReply: {
+                            ...state.appStates.aiSuggestedReply,
+                            id: state.appStates.aiSuggestedReply.id + 1
+                        }
                     }
                 };
 

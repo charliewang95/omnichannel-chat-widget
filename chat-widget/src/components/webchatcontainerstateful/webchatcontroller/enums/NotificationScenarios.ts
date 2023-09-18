@@ -6,5 +6,6 @@ export enum NotificationScenarios {
     InternetConnection = "internet connection",
     MaxSizeError = "max size",
     ChatDisconnect = "chat disconnect",
-    TPC = "tpc blocked"
+    TPC = "tpc blocked",
+    SuggestedReply = "suggested reply"
 }

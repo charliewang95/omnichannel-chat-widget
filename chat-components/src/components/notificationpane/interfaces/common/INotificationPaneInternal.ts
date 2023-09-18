@@ -64,6 +64,16 @@ export interface INotificationPaneInternal {
     closeChatButtonHoverStyleProps?: IStyle;
     closeChatButtonClassName?: string;
 
+    /**
+     * Copilot scenario specific properties
+     */ 
+    // close chat button
+    hideSendMessageButton?: boolean;
+    sendMessageButtonProps?: ICommandButtonControlProps;
+    sendMessageButtonStyleProps?: IStyle;
+    sendMessageButtonHoverStyleProps?: IStyle;
+    sendMessageButtonClassName?: string;
+
     // button group styles
     buttonGroupStyleProps?: IStyle;
 

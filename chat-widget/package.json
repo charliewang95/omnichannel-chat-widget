@@ -74,6 +74,7 @@
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
+    "@azure/openai": "^1.0.0-beta.5",
     "@microsoft/omnichannel-chat-components": "^1.0.7",
     "@microsoft/omnichannel-chat-sdk": "1.4.7",
     "abort-controller-es5": "^2.0.1",

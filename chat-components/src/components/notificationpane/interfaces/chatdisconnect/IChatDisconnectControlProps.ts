@@ -8,4 +8,6 @@ import { INotificationPaneControlProps } from "../common/INotificationPaneContro
 export interface IChatDisconnectControlProps extends INotificationPaneControlProps {
     hideCloseChatButton?: boolean;
     closeChatButtonProps?: ICommandButtonControlProps;
+    hideSendMessageButton?: boolean;
+    sendMessageButtonProps?: ICommandButtonControlProps;
 }
